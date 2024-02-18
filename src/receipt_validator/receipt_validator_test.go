@@ -105,7 +105,7 @@ func TestPurchaseTimeValid(test *testing.T) {
 		},
 		{
 			receipt: receipt.Receipt{PurchaseTime: "9:30"},
-			expectedValidity: true,
+			expectedValidity: false,
 		},
 		{
 			receipt: receipt.Receipt{PurchaseTime: "A9:30"},

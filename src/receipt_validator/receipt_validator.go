@@ -50,15 +50,11 @@ func PurchaseDateValid(receipt receipt.Receipt) bool {
 }
 
 func PurchaseTimeValid(receipt receipt.Receipt) bool {
-	// Unclear if AM timestamps are written as 07:30 or 7:30, so will handle both for now
+	// Assuming all timestamps are written HH:MM
 	if (len(receipt.PurchaseTime) == 5 &&
 	    StringIsInt(receipt.PurchaseTime[0:2]) &&
 	    receipt.PurchaseTime[2:3] == ":" &&
-	    StringIsInt(receipt.PurchaseTime[3:5])) ||
-	   (len(receipt.PurchaseTime) == 4 &&
-		StringIsInt(receipt.PurchaseTime[0:1]) &&
-	    receipt.PurchaseTime[1:2] == ":" &&
-	    StringIsInt(receipt.PurchaseTime[2:4])) {
+	    StringIsInt(receipt.PurchaseTime[3:5])) {
 		return true
 	}
 	return false
