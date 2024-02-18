@@ -9,17 +9,6 @@ import (
 	"unicode"
 )
 
-type ReceiptProcessor interface {
-	ProcessReceipt(receipt receipt.Receipt) int
-	RetailerNamePoints(receipt receipt.Receipt) (int error)
-	RoundDollarAmountPoints(receipt receipt.Receipt) (int error)
-	MultipleOfQuarterPoints(receipt receipt.Receipt) (int error)
-	EveryTwoItemsPoints(receipt receipt.Receipt) (int error)
-	DescriptionLengthPoints(receipt receipt.Receipt) (int error)
-	OddPurchaseDatePoints(receipt receipt.Receipt) (int error)
-	PurchaseTimePoints(receipt receipt.Receipt) (int error)
-}
-
 func RetailerNamePoints(receipt receipt.Receipt) (int, error) {
 	// One point for every alphanumeric character in the retailer name
 	addedPoints := 0
@@ -69,11 +58,11 @@ func DescriptionLengthPoints(receipt receipt.Receipt) (int, error) {
 	for _, item := range receipt.Items {
 		priceFloat, err := strconv.ParseFloat(item.Price, 64)
 		if err != nil {
-				return -1, errors.New("strconv.ParseFloat() in descriptionLengthPoints() failed")
+			return -1, errors.New("strconv.ParseFloat() in descriptionLengthPoints() failed")
 		}
 
 		if len(strings.TrimSpace(item.ShortDescription)) % 3 == 0 {
-				addedPoints += int(math.Ceil(priceFloat * .2))
+			addedPoints += int(math.Ceil(priceFloat * .2))
 		}
 	}
 	return addedPoints, nil

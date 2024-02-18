@@ -5,15 +5,6 @@ import (
 	"net/http"
 )
 
-type ResponseHandler interface {
-	HandleBadRequestError(response http.ResponseWriter, errorMsg string, statusCode int)
-	HandleNotFoundError(response http.ResponseWriter, errorMsg string)
-	HandleMethodNotAllowed(response http.ResponseWriter)
-	HandleInternalServerError(response http.ResponseWriter)
-	SendIdResponse(id string, response http.ResponseWriter)
-	SendPointsResponse(points int, response http.ResponseWriter)
-}
-
 type IdResponse struct {
 	Id string `json:"id"`
 }
