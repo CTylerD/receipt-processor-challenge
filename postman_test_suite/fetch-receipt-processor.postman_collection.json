@@ -63,8 +63,8 @@
 						"exec": [
 							"pm.environment.set(\"receipt_id2\", pm.response.json()[\"id\"]);",
 							"",
-							"pm.test(\"201 status code\", function () {",
-							"    pm.response.to.have.status(201);",
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
 							"});",
 							"",
 							"pm.test(\"content is valid\", function () {",

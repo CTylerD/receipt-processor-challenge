@@ -22,7 +22,7 @@ func SendIdResponse(id string, response http.ResponseWriter) {
 	responseStruct := IdResponse {
 		Id: id,
 	}
-	sendHttpResponse(responseStruct, response, 201)
+	sendHttpResponse(responseStruct, response)
 }
 
 type PointsResponse struct {
@@ -33,17 +33,17 @@ func SendPointsResponse(points int, response http.ResponseWriter) {
 	responseStruct := PointsResponse {
 		Points: points,
 	}
-	sendHttpResponse(responseStruct, response, 200)
+	sendHttpResponse(responseStruct, response)
 }
 
-func sendHttpResponse(responseStruct interface{}, response http.ResponseWriter, statusCode int) {
+func sendHttpResponse(responseStruct interface{}, response http.ResponseWriter) {
 	responseBody, err := json.Marshal(responseStruct)
 		if err != nil {
 			HandleInternalServerError(response)
 			return
 		}
 
-	response.WriteHeader(statusCode)
+	response.WriteHeader(http.StatusOK)
 	response.Header().Set("Content-Type", "application/json")
 	response.Write(responseBody)
 }
@@ -77,13 +77,13 @@ func HandleInternalServerError(response http.ResponseWriter) {
 func handleClientError(response http.ResponseWriter, errorMsg string, statusCode int) {
 	errorResponse := map[string]string{"Error": errorMsg}
 
-    jsonResponse, err := json.Marshal(errorResponse)
-    if err != nil {
-        HandleInternalServerError(response)
-        return
-    }
+	jsonResponse, err := json.Marshal(errorResponse)
+	if err != nil {
+		HandleInternalServerError(response)
+		return
+	}
 
 	response.WriteHeader(statusCode)
-    response.Header().Set("Content-Type", "application/json")
-    response.Write(jsonResponse)
+	response.Header().Set("Content-Type", "application/json")
+	response.Write(jsonResponse)
 }
