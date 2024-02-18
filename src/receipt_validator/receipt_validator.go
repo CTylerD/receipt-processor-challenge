@@ -13,14 +13,11 @@ func StringIsInt(str string) bool {
 }
 
 func ReceiptMissingFields(receipt receipt.Receipt) bool {
-	if receipt.Retailer == "" ||
+	return receipt.Retailer == "" ||
 	   receipt.PurchaseDate == "" ||
 	   receipt.PurchaseTime == "" ||
 	   len(receipt.Items) == 0 ||
-	   receipt.Total == "" {
-		return true
-	}
-	return false
+	   receipt.Total == ""
 }
 
 func ReceiptFieldsValid(receipt receipt.Receipt) bool {
@@ -38,26 +35,20 @@ func RetailerValid(receipt receipt.Receipt) bool {
 }
 
 func PurchaseDateValid(receipt receipt.Receipt) bool {
-	if len(receipt.PurchaseDate) == 10 &&
+	return len(receipt.PurchaseDate) == 10 &&
 	   StringIsInt(receipt.PurchaseDate[0:4]) &&
 	   receipt.PurchaseDate[4:5] == "-" &&
 	   StringIsInt(receipt.PurchaseDate[5:7]) &&
 	   receipt.PurchaseDate[7:8] == "-" &&
-	   StringIsInt(receipt.PurchaseDate[8:10]) {
-		return true
-	}
-	return false
+	   StringIsInt(receipt.PurchaseDate[8:10])
 }
 
 func PurchaseTimeValid(receipt receipt.Receipt) bool {
 	// Assuming all timestamps are written HH:MM
-	if (len(receipt.PurchaseTime) == 5 &&
+	return len(receipt.PurchaseTime) == 5 &&
 	    StringIsInt(receipt.PurchaseTime[0:2]) &&
 	    receipt.PurchaseTime[2:3] == ":" &&
-	    StringIsInt(receipt.PurchaseTime[3:5])) {
-		return true
-	}
-	return false
+	    StringIsInt(receipt.PurchaseTime[3:5])
 }
 
 func ItemsValid(receipt receipt.Receipt) bool {
