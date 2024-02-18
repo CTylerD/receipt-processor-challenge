@@ -9,8 +9,8 @@ import (
 
 func TestRetailerValid(test *testing.T) {
 	testCases := []struct {
-		receipt           receipt.Receipt
-		expectedValidity  bool
+		receipt receipt.Receipt
+		expectedValidity bool
 	}{
 		{
 			receipt: receipt.Receipt{Retailer: "The Corner Store"},
@@ -133,7 +133,7 @@ func TestPurchaseTimeValid(test *testing.T) {
 
 func TestValidateItems(test *testing.T) {
 	testCases := []struct {
-		receipt          receipt.Receipt
+		receipt receipt.Receipt
 		expectedValidity bool
 	}{
 		{
