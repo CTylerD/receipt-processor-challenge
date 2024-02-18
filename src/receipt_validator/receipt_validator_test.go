@@ -1,9 +1,60 @@
 package receipt_manager
 
 import (
+	item "receipt_manager/item"
 	receipt "receipt_manager/receipt"
+	rv "receipt_manager/receipt_validator"
 	"testing"
 )
+
+func TestRetailerValid(test *testing.T) {
+    testCases := []struct {
+        receipt           receipt.Receipt
+        expectedValidity  bool
+    }{
+        {
+            receipt: receipt.Receipt{Retailer: "The Corner Store"},
+            expectedValidity: true,
+        },
+        {
+            receipt: receipt.Receipt{Retailer: "Walmart 123"},
+            expectedValidity: true,
+        },
+        {
+            receipt: receipt.Receipt{Retailer: "Target!"},
+            expectedValidity: false,
+        },
+        {
+            receipt: receipt.Receipt{Retailer: "Best Buy"},
+            expectedValidity: true,
+        },
+        {
+            receipt: receipt.Receipt{Retailer: "123 Grocery Store"},
+            expectedValidity: true,
+        },
+        {
+            receipt: receipt.Receipt{Retailer: ""},
+            expectedValidity: false,
+        },
+        {
+            receipt: receipt.Receipt{Retailer: "Test*Store"},
+            expectedValidity: false, // False case: contains special character
+        },
+        {
+            receipt: receipt.Receipt{Retailer: "Supermarket!"},
+            expectedValidity: false, // False case: contains special character
+        },
+    }
+
+    for _, testCase := range testCases {
+        retailerValidity := rv.RetailerValid(testCase.receipt)
+
+        if retailerValidity != testCase.expectedValidity {
+            test.Errorf("Retailer '%s', validity is %t, but expected %t",
+                testCase.receipt.Retailer, retailerValidity, testCase.expectedValidity)
+        }
+    }
+}
 
 func TestPurchaseDateValid(test *testing.T) {
     testCases := []struct {
@@ -34,7 +85,7 @@ func TestPurchaseDateValid(test *testing.T) {
 	}
 
     for _, testCase := range testCases {
-        purchaseDateValidity := PurchaseDateValid(testCase.receipt)
+        purchaseDateValidity := rv.PurchaseDateValid(testCase.receipt)
         
         if purchaseDateValidity != testCase.expectedValidity {
             test.Errorf("Purchase Date '%s', validity is %t, but expected %t",
@@ -71,13 +122,73 @@ func TestPurchaseTimeValid(test *testing.T) {
 	}
 		
     for _, testCase := range testCases {
-        purchaseTimeValidity := PurchaseTimeValid(testCase.receipt)
+        purchaseTimeValidity := rv.PurchaseTimeValid(testCase.receipt)
         
         if purchaseTimeValidity != testCase.expectedValidity {
             test.Errorf("Purchase Time '%s', validity is %t, but expected %t",
                 testCase.receipt.PurchaseTime, purchaseTimeValidity, testCase.expectedValidity)
         }
     }
+}
+
+func TestValidateItems(test *testing.T) {
+	testCases := []struct {
+		receipt          receipt.Receipt
+		expectedValidity bool
+	}{
+		{
+			receipt: receipt.Receipt{ 
+				Items: []item.Item{
+					{ShortDescription: "400 fish sticks", Price: "6.49"},
+					{ShortDescription: "Coca Cola 6pack", Price: "5.99"},
+				},
+			},
+			expectedValidity: true,
+		},
+		{
+			receipt: receipt.Receipt{ 
+				Items: []item.Item{
+					{ShortDescription: "4,000 fish sticks", Price: "10.00"},
+					{ShortDescription: "Coca Cola 6-pack", Price: "5.99"},
+				},
+			},
+			expectedValidity: false,
+		},
+		{
+			receipt: receipt.Receipt{
+				Items: []item.Item{
+					{ShortDescription: "400 fish sticks", Price: "6.49"},
+					{ShortDescription: "Coca Cola 6PK", Price: "invalid_price"},
+				},
+			},
+			expectedValidity: false,
+		},
+		{
+			receipt: receipt.Receipt{
+				Items: []item.Item{
+					{ShortDescription: "", Price: "6.49"},
+					{ShortDescription: "Coca Cola 6PK", Price: "5.99"},
+				},
+			},
+			expectedValidity: false,
+		},
+		{
+			receipt: receipt.Receipt{
+				Items: []item.Item{
+					{ShortDescription: "400 fish sticks", Price: ""},
+					{ShortDescription: "Coca Cola 6PK", Price: "5.99"},
+				},
+			},
+			expectedValidity: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		result := rv.ItemsValid(testCase.receipt)
+		if result != testCase.expectedValidity {
+			test.Errorf("Validation result mismatch for items %+v, expected %t but got %t", testCase.receipt.Items, testCase.expectedValidity, result)
+		}
+	}
 }
 
 func TestTotalValid(test *testing.T) {
@@ -108,7 +219,7 @@ func TestTotalValid(test *testing.T) {
     }
 		
     for _, testCase := range testCases {
-        totalValidity := TotalValid(testCase.receipt)
+        totalValidity := rv.TotalValid(testCase.receipt)
         
         if totalValidity != testCase.expectedValidity {
             test.Errorf("Total '%s', validity is %t, but expected %t",

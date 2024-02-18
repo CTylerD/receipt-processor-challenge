@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	receipt_processor "receipt_manager/point_calculator"
 	receipt "receipt_manager/receipt"
-	receipt_processor "receipt_manager/receipt_processor"
 	receipt_validator "receipt_manager/receipt_validator"
 	response_handler "receipt_manager/response_handler"
 
@@ -14,7 +14,7 @@ import (
 
 var receiptMap = make(map[string]receipt.Receipt)
 
-func processReceiptHandler(response http.ResponseWriter, request *http.Request) {
+func newReceiptHandler(response http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
 		response_handler.HandleMethodNotAllowed(response)
 		return 
@@ -69,7 +69,7 @@ func getPointsHandler(response http.ResponseWriter, request *http.Request) {
 
 func main() {
     router := mux.NewRouter()
-    router.HandleFunc("/receipts/process", processReceiptHandler)
+    router.HandleFunc("/receipts/process", newReceiptHandler)
     router.HandleFunc("/receipts/{id}/points", getPointsHandler)
     
     http.Handle("/", router)

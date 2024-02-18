@@ -1,7 +1,9 @@
 package receipt_manager
 
 import (
+	"fmt"
 	receipt "receipt_manager/receipt"
+	"regexp"
 	"strconv"
 )
 
@@ -11,7 +13,6 @@ func StringIsInt(str string) bool {
 }
 
 func ReceiptMissingFields(receipt receipt.Receipt) bool {
-	// Let's assume that all receipt fields are required
 	if receipt.Retailer == "" ||
 	   receipt.PurchaseDate == "" ||
 	   receipt.PurchaseTime == "" ||
@@ -31,8 +32,9 @@ func ReceiptFieldsValid(receipt receipt.Receipt) bool {
 }
 
 func RetailerValid(receipt receipt.Receipt) bool {
-	// Since the decoder worked, we can assume the retailer is a string
-	return true
+	pattern := "^[\\w\\s\\-]+$"
+	retailerIsValid, _ := regexp.MatchString(pattern, receipt.Retailer)
+	return retailerIsValid
 }
 
 func PurchaseDateValid(receipt receipt.Receipt) bool {
@@ -63,16 +65,40 @@ func PurchaseTimeValid(receipt receipt.Receipt) bool {
 }
 
 func ItemsValid(receipt receipt.Receipt) bool {
-	// Since the decodor worked, we can assume that items is a list of Item structs
+	for _, item := range receipt.Items {
+		if !validateItemDescription(item.ShortDescription) || !validateItemPrice(item.Price) {
+			return false
+		}
+	}
 	return true
 }
 
-func TotalValid(receipt receipt.Receipt) bool {
-	if len(receipt.Total) >= 4 &&
-	    StringIsInt(receipt.Total[:len(receipt.Total)-3]) &&
-	    receipt.Total[len(receipt.Total)-3:len(receipt.Total)-2] == "." &&
-		StringIsInt(receipt.Total[len(receipt.Total)-2:]) {
-			return true
+func validateItemDescription(description string) bool {
+	pattern := "^[\\w\\s\\-]+$"
+	descriptionIsValid, err := regexp.MatchString(pattern, description)
+	if err != nil {
+		fmt.Println("Error while validating item description:", err)
+		return false
 	}
-	return false
+	return descriptionIsValid
+}
+
+func validateItemPrice(price string) bool {
+	pattern := "^\\d+\\.\\d{2}$"
+	priceIsValid, err := regexp.MatchString(pattern, price)
+	if err != nil {
+		fmt.Println("Error while validating item price:", err)
+		return false
+	}
+	return priceIsValid
+}
+
+func TotalValid(receipt receipt.Receipt) bool {
+	pattern := "^\\d+\\.\\d{2}$"
+	totalIsValid, err := regexp.MatchString(pattern, receipt.Total)
+	if err != nil {
+		fmt.Println("Error while validating total price:", err)
+		return false
+	}
+	return totalIsValid
 }

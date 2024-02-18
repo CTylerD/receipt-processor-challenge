@@ -3,6 +3,7 @@ package receipt_manager
 import (
 	"errors"
 	item "receipt_manager/item"
+	pc "receipt_manager/point_calculator"
 	receipt "receipt_manager/receipt"
 	"testing"
 )
@@ -36,7 +37,7 @@ func TestRetailerNamePoints(test *testing.T) {
 	}
 		
     for _, testCase := range testCases {
-        actualPoints, err := RetailerNamePoints(testCase.receipt)
+        actualPoints, err := pc.RetailerNamePoints(testCase.receipt)
         
         if err != nil {
             test.Errorf("Test failed with error: %v", err)
@@ -83,7 +84,7 @@ func TestRoundDollarAmountPoints(test *testing.T) {
     }
 		
     for _, testCase := range testCases {
-        actualPoints, err := RoundDollarAmountPoints(testCase.receipt)
+        actualPoints, err := pc.RoundDollarAmountPoints(testCase.receipt)
         
         if testCase.expectedErr == nil && err != nil {
             test.Errorf("Test failed with error: %v", err)
@@ -135,7 +136,7 @@ func TestMultipleOfQuarterPoints(test *testing.T) {
     }
 
 	for _, testCase := range testCases {
-        actualPoints, err := MultipleOfQuarterPoints(testCase.receipt)
+        actualPoints, err := pc.MultipleOfQuarterPoints(testCase.receipt)
         
         if testCase.expectedErr == nil && err != nil {
             test.Errorf("Test failed with error: %v", err)
@@ -194,7 +195,7 @@ func TestEveryTwoItemsPoints(test *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-        actualPoints, err := EveryTwoItemsPoints(testCase.receipt)
+        actualPoints, err := pc.EveryTwoItemsPoints(testCase.receipt)
         
         if testCase.expectedErr == nil && err != nil {
             test.Errorf("Test failed with error: %v", err)
@@ -254,7 +255,7 @@ func TestDescriptionLengthPoints(test *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		actualPoints, err := DescriptionLengthPoints(testCase.receipt)
+		actualPoints, err := pc.DescriptionLengthPoints(testCase.receipt)
         
         if testCase.expectedErr == nil && err != nil {
             test.Errorf("Test failed with error: %v", err)
@@ -301,7 +302,7 @@ func TestOddPurchaseDatePoints(test *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		actualPoints, err := OddPurchaseDatePoints(testCase.receipt)
+		actualPoints, err := pc.OddPurchaseDatePoints(testCase.receipt)
         
         if testCase.expectedErr == nil && err != nil {
             test.Errorf("Test failed with error: %v", err)
