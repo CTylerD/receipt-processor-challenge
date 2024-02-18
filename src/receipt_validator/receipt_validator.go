@@ -25,10 +25,10 @@ func ReceiptMissingFields(receipt receipt.Receipt) bool {
 
 func ReceiptFieldsValid(receipt receipt.Receipt) bool {
 	return RetailerValid(receipt) &&
-	       PurchaseDateValid(receipt) &&
-		   PurchaseTimeValid(receipt) &&
-		   ItemsValid(receipt) &&
-		   TotalValid(receipt)
+		  PurchaseDateValid(receipt) &&
+		  PurchaseTimeValid(receipt) &&
+		  ItemsValid(receipt) &&
+		  TotalValid(receipt)
 }
 
 func RetailerValid(receipt receipt.Receipt) bool {
@@ -56,7 +56,7 @@ func PurchaseTimeValid(receipt receipt.Receipt) bool {
 	    receipt.PurchaseTime[2:3] == ":" &&
 	    StringIsInt(receipt.PurchaseTime[3:5])) ||
 	   (len(receipt.PurchaseTime) == 4 &&
-	    StringIsInt(receipt.PurchaseTime[0:1]) &&
+		StringIsInt(receipt.PurchaseTime[0:1]) &&
 	    receipt.PurchaseTime[1:2] == ":" &&
 	    StringIsInt(receipt.PurchaseTime[2:4])) {
 		return true

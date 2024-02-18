@@ -123,11 +123,11 @@ func pointRuleFunctions() []pointCalculators {
 func ProcessReceipt(receipt receipt.Receipt) (int, error) {
 	  totalPoints := 0
 	  for _, function := range pointRuleFunctions() {
-			points, err := function(receipt)
-			if err != nil {
-				  return -1, err
-			}
-			totalPoints += points
+		points, err := function(receipt)
+		if err != nil {
+			return -1, err
 		}
-		return totalPoints, nil
+		totalPoints += points
+	}
+	return totalPoints, nil
 }

@@ -68,10 +68,10 @@ func getPointsHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
-    router := mux.NewRouter()
-    router.HandleFunc("/receipts/process", newReceiptHandler)
-    router.HandleFunc("/receipts/{id}/points", getPointsHandler)
-    
-    http.Handle("/", router)
-    http.ListenAndServe(":8080", nil)
+	router := mux.NewRouter()
+	router.HandleFunc("/receipts/process", newReceiptHandler)
+	router.HandleFunc("/receipts/{id}/points", getPointsHandler)
+	
+	http.Handle("/", router)
+	http.ListenAndServe(":8080", nil)
 }

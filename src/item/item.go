@@ -1,6 +1,6 @@
 package item
 
 type Item struct {
-    ShortDescription  string    `json:"shortDescription"`
-    Price             string    `json:"price"`
+	ShortDescription  string    `json:"shortDescription"`
+	Price             string    `json:"price"`
 }
