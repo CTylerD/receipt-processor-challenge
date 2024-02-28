@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	receipt_processor "receipt_manager/point_calculator"
@@ -8,11 +10,27 @@ import (
 	receipt_validator "receipt_manager/receipt_validator"
 	response_handler "receipt_manager/response_handler"
 
-	uuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
 var receiptMap = make(map[string]receipt.Receipt)
+
+func idGenerator(receipt receipt.Receipt) string {
+	receiptData := ""
+	receiptData += receipt.Retailer
+	receiptData += receipt.PurchaseDate
+	receiptData += receipt.PurchaseTime
+	for _, item := range receipt.Items {
+		receiptData += item.ShortDescription
+		receiptData += item.Price
+	}
+	receiptData += receipt.Total
+
+	idHash := sha256.New()
+	idHash.Write([]byte(receiptData))
+
+	return hex.EncodeToString(idHash.Sum(nil))
+}
 
 func newReceiptHandler(response http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
@@ -40,7 +58,13 @@ func newReceiptHandler(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	id := uuid.New().String()
+	id := idGenerator(newReceipt)
+	_, receiptExists := receiptMap[id]
+	if receiptExists {
+		response_handler.HandleDuplicateReceipt(response, "Receipt already exists")
+		return
+	}
+
 	receiptMap[id] = newReceipt
 	response_handler.SendIdResponse(id, response)
 }

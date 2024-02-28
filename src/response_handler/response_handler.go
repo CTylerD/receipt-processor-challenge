@@ -78,3 +78,9 @@ func handleClientError(response http.ResponseWriter, errorMsg string, statusCode
 	response.Header().Set("Content-Type", "application/json")
 	response.Write(jsonResponse)
 }
+
+func HandleDuplicateReceipt(response http.ResponseWriter, errorMsg string) {
+	handleClientError(response,
+		"This receipt already exists",
+		http.StatusBadRequest)
+}
